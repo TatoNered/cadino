@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎰 Crypto Casino - Играй и выигрывай</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 0 20px;
+      border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #ffc107, #ff5722);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: #aaa;
+      font-size: 16px;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+    }
+
+    .card h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #ffc107;
+    }
+
+    .payment-form {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #ffc107;
+      box-shadow: 0 0 10px rgba(255, 193, 7, 0.2);
+    }
+
+    .amount-info {
+      background: rgba(33, 150, 243, 0.1);
+      border-left: 3px solid #2196f3;
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #90caf9;
+      margin-bottom: 15px;
+    }
+
+    .wallet-address {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 15px;
+      border-radius: 6px;
+      word-break: break-all;
+      font-family: 'Monaco', monospace;
+      font-size: 12px;
+      color: #90caf9;
+      line-height: 1.6;
+      margin-bottom: 10px;
+      border: 1px solid rgba(144, 202, 249, 0.3);
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #ffc107, #ff9800);
+      color: #000;
+      grid-column: 1 / -1;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(255, 193, 7, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .status-box {
+      background: rgba(76, 175, 80, 0.1);
+      border-left: 3px solid #4caf50;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .status-box.active {
+      display: block;
+    }
+
+    .status-box.error {
+      background: rgba(244, 67, 54, 0.1);
+      border-left-color: #f44336;
+    }
+
+    .status-box.warning {
+      background: rgba(255, 193, 7, 0.1);
+      border-left-color: #ffc107;
+    }
+
+    .status-icon {
+      font-size: 20px;
+      margin-right: 10px;
+    }
+
+    .status-text {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid #ffc107;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ИГРА */
+    .game-container {
+      display: none;
+    }
+
+    .game-container.active {
+      display: block;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .balance-display {
+      font-size: 28px;
+      font-weight: bold;
+      color: #4caf50;
+    }
+
+    .game-board {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .slots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .slot {
+      aspect-ratio: 1;
+      background: linear-gradient(45deg, #ffc107, #ff9800);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.1s;
+      border: 2px solid rgba(255, 193, 7, 0.5);
+    }
+
+    .slot:hover {
+      transform: scale(0.95);
+    }
+
+    .slot.spinning {
+      animation: spin-slot 0.1s infinite;
+    }
+
+    @keyframes spin-slot {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(5deg); }
+    }
+
+    .game-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 3px solid #2196f3;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #aaa;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #90caf9;
+    }
+
+    .game-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-game {
+      padding: 15px;
+      background: linear-gradient(45deg, #4caf50, #45a049);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-game:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(76, 175, 80, 0.4);
+    }
+
+    .btn-withdraw {
+      background: linear-gradient(45deg, #ff9800, #f57c00);
+    }
+
+    .btn-withdraw:hover {
+      box-shadow: 0 8px 16px rgba(255, 152, 0, 0.4);
+    }
+
+    .message {
+      text-align: center;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+
+    .message.win {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
+    }
+
+    .message.loss {
+      background: rgba(244, 67, 54, 0.2);
+      color: #f44336;
+    }
+
+    .message.info {
+      background: rgba(33, 150, 243, 0.2);
+      color: #2196f3;
+    }
+
+    .user-id {
+      font-size: 12px;
+      color: #666;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      word-break: break-all;
+    }
+
+    .stats-history {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .stat-item {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #aaa;
+      border-left: 3px solid #ffc107;
+    }
+
+    .stat-item.win {
+      border-left-color: #4caf50;
+      color: #4caf50;
+    }
+
+    .stat-item.loss {
+      border-left-color: #f44336;
+      color: #f44336;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .modal-content h3 {
+      color: #ffc107;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      border-radius: 6px;
+      color: #fff;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .modal-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>🎰 Crypto Casino</h1>
+    <p class="subtitle">Играй, выигрывай, выводи крипто</p>
+  </header>
+
+  <div class="main-content">
+    <!-- ПЛАТЕЖНАЯ СИСТЕМА -->
+    <div class="card" id="payment-section">
+      <h2>💳 Пополнить счет</h2>
+      
+      <div class="payment-form">
+        <div class="form-group">
+          <label>Сумма (USD)</label>
+          <input type="number" id="amount-usd" value="1" min="1" step="0.1">
+          <div class="amount-info" id="amount-info">
+            = 0.00030 ETH (примерно)
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Отправить на адрес</label>
+          <div class="wallet-address" id="wallet-display">
+            0xB4f8b8156aE20f51E1336AcF3a927a8B4d7d0517
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn btn-secondary" onclick="copyWallet()">📋 Копировать</button>
+          <button class="btn btn-secondary" onclick="showQR()">📱 QR</button>
+        </div>
+
+        <button class="btn btn-primary" id="pay-btn" onclick="startPaymentCheck()">
+          Я отправил платеж
+        </button>
+      </div>
+
+      <div class="status-box" id="status-box">
+        <div class="status-text" id="status-text"></div>
+      </div>
+
+      <div class="user-id">
+        Ваш ID: <span id="user-id-display">генерируется...</span>
+      </div>
+    </div>
+
+    <!-- ИГРА -->
+    <div class="card game-container" id="game-section">
+      <h2>🎮 Играй</h2>
+
+      <div class="game-header">
+        <div>
+          <div class="stat-label">Ваш баланс</div>
+          <div class="balance-display" id="balance-display">0.000 ETH</div>
+        </div>
+        <div>
+          <div class="stat-label">Ставка</div>
+          <div class="balance-display" id="bet-display" style="color: #ff9800;">0.0001 ETH</div>
+        </div>
+      </div>
+
+      <div class="game-board">
+        <div class="slots" id="slots-container">
+          <div class="slot" id="slot-1">🍎</div>
+          <div class="slot" id="slot-2">🍎</div>
+          <div class="slot" id="slot-3">🍎</div>
+        </div>
+
+        <button class="btn-game" id="spin-btn" onclick="spinSlots()">
+          🎯 ВРАЩАЙ (0.0001 ETH)
+        </button>
+      </div>
+
+      <div class="game-stats">
+        <div class="stat">
+          <div class="stat-label">Выиграно</div>
+          <div class="stat-value" id="wins-count">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Проиграно</div>
+          <div class="stat-value" id="losses-count">0</div>
+        </div>
+      </div>
+
+      <div id="game-message"></div>
+
+      <div class="game-controls">
+        <button class="btn-game" onclick="changeBet()">💰 Изменить ставку</button>
+        <button class="btn-game btn-withdraw" onclick="showWithdrawModal()">💸 Вывести</button>
+      </div>
+
+      <div class="stats-history">
+        <div style="font-size: 12px; color: #aaa; margin-bottom: 10px; text-transform: uppercase;">История раундов</div>
+        <div id="history-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ВЫВОДА -->
+<div class="modal" id="withdraw-modal">
+  <div class="modal-content">
+    <h3>💸 Вывести средства</h3>
+    <p style="color: #aaa; margin-bottom: 15px;">Введите адрес кошелька для вывода</p>
+    <input type="text" id="withdraw-address" placeholder="0x...">
+    <p style="color: #ffc107; font-size: 12px; margin-bottom: 15px;">
+      Комиссия сети: ~0.000050 ETH
+    </p>
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="closeWithdrawModal()">Отмена</button>
+      <button class="btn btn-primary" onclick="confirmWithdraw()">Вывести</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL СТАВКИ -->
+<div class="modal" id="bet-modal">
+  <div class="modal-content">
+    <h3>💰 Установить ставку</h3>
+    <input type="number" id="bet-input" placeholder="0.0001" min="0.00001" step="0.00001">
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="closeBetModal()">Отмена</button>
+      <button class="btn btn-primary" onclick="confirmBet()">ОК</button>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js"></script>
+
+<!-- FIREBASE CONFIG (заменить на твой) -->
+<script>
+  // ⚠️ ВСТАВИТЬ СВОЙ КОНФИГ FIREBASE ЗДЕСЬ
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  // Инициализация Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
+<script>
+  // ========== ПЕРЕМЕННЫЕ ==========
+  const WALLET_ADDRESS = '0xB4f8b8156aE20f51E1336AcF3a927a8B4d7d0517';
+  const ETHERSCAN_API_KEY = 'M726MKUKDSV9VWS8XJRT2A564VW69RNJ1Q';
+  const ETH_PRICE = 3500; // USD за ETH (можно обновлять)
+  const HOUSE_FEE = 0.05; // 5% комиссия
+  const SPIN_COST = 0.0001; // ETH за один спин
+  const SPIN_WIN_RATE = 0.3; // 30% вероятность выигрыша
+  const WIN_MULTIPLIER = 0.5; // выигрыш = ставка * 1.5 (0.0001 * 1.5)
+
+  let userID = generateUserID();
+  let userBalance = 0;
+  let currentBet = SPIN_COST;
+  let isPaymentChecking = false;
+  let lastCheckedTx = null;
+  let gameHistory = [];
+  let wins = 0;
+  let losses = 0;
+
+  // ========== ИНИЦИАЛИЗАЦИЯ ==========
+  window.addEventListener('load', () => {
+    document.getElementById('user-id-display').textContent = userID;
+    loadUserData();
+    setupAmountConverter();
+  });
+
+  // ========== ГЕНЕРАЦИЯ ID ==========
+  function generateUserID() {
+    const id = 'user_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('userID', id);
+    return id;
+  }
+
+  function loadUserData() {
+    const savedID = localStorage.getItem('userID');
+    if (savedID) {
+      userID = savedID;
+      document.getElementById('user-id-display').textContent = userID;
+    }
+
+    // Загрузить из Firebase
+    db.ref('users/' + userID).on('value', (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        userBalance = data.balance || 0;
+        wins = data.wins || 0;
+        losses = data.losses || 0;
+        gameHistory = data.gameHistory || [];
+        
+        updateBalanceDisplay();
+        updateHistoryDisplay();
+        document.getElementById('wins-count').textContent = wins;
+        document.getElementById('losses-count').textContent = losses;
+
+        if (userBalance > 0) {
+          document.getElementById('payment-section').style.display = 'none';
+          document.getElementById('game-section').classList.add('active');
+        }
+      }
+    });
+  }
+
+  // ========== КОПИРОВАНИЕ ==========
+  function copyWallet() {
+    navigator.clipboard.writeText(WALLET_ADDRESS);
+    const btn = event.target;
+    btn.textContent = '✅ Скопировано!';
+    setTimeout(() => btn.textContent = '📋 Копировать', 2000);
+  }
+
+  function showQR() {
+    alert('QR: ethereum:' + WALLET_ADDRESS);
+  }
+
+  // ========== КОНВЕРТЕР ВАЛЮТ ==========
+  function setupAmountConverter() {
+    const input = document.getElementById('amount-usd');
+    input.addEventListener('input', () => {
+      const usd = parseFloat(input.value) || 0;
+      const eth = (usd / ETH_PRICE).toFixed(6);
+      document.getElementById('amount-info').textContent = `= ${eth} ETH (примерно)`;
+    });
+  }
+
+  // ========== ПРОВЕРКА ПЛАТЕЖА ==========
+  function startPaymentCheck() {
+    if (isPaymentChecking) return;
+    isPaymentChecking = true;
+
+    const btn = document.getElementById('pay-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Проверяю платеж...';
+
+    showStatus('warning', '⏳ Ищу платеж на блокчейне...');
+
+    checkPaymentLoop();
+  }
+
+  async function checkPaymentLoop(checkCount = 0) {
+    if (checkCount > 240) { // 20 минут
+      showStatus('error', '❌ Платеж не найден. Проверьте адрес и сумму.');
+      isPaymentChecking = false;
+      document.getElementById('pay-btn').disabled = false;
+      document.getElementById('pay-btn').textContent = 'Я отправил платеж';
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.etherscan.io/api?module=account&action=txlist&address=${WALLET_ADDRESS}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.status === '1' && data.result) {
+        for (let tx of data.result) {
+          if (tx.to.toLowerCase() === WALLET_ADDRESS.toLowerCase() && 
+              tx.isError === '0' && 
+              tx.hash !== lastCheckedTx) {
+            
+            const receivedAmount = parseFloat(tx.value) / 1e18;
+            const usd = parseFloat(document.getElementById('amount-usd').value);
+            const expectedEth = (usd / ETH_PRICE);
+
+            if (receivedAmount >= expectedEth * 0.95) { // 95% tolerance
+              // Платеж найден! Зачисляем баланс с комиссией
+              const afterFee = receivedAmount * (1 - HOUSE_FEE);
+              userBalance = afterFee;
+              lastCheckedTx = tx.hash;
+
+              // Сохраняем в Firebase
+              db.ref('users/' + userID).set({
+                balance: userBalance,
+                totalDeposited: receivedAmount,
+                lastTx: tx.hash,
+                timestamp: Date.now(),
+                wins: 0,
+                losses: 0,
+                gameHistory: []
+              });
+
+              showStatus('success', `✅ Платеж получен! ${receivedAmount.toFixed(6)} ETH\n(После комиссии 5%: ${afterFee.toFixed(6)} ETH)`);
+              
+              setTimeout(() => {
+                document.getElementById('payment-section').style.display = 'none';
+                document.getElementById('game-section').classList.add('active');
+                updateBalanceDisplay();
+              }, 2000);
+
+              return;
+            }
+          }
+        }
+      }
+
+      // Не найдено, проверяем снова
+      showStatus('warning', `⏳ Проверка ${checkCount + 1}/240... Ищу входящий платеж...`);
+      setTimeout(() => checkPaymentLoop(checkCount + 1), 5000);
+
+    } catch (error) {
+      showStatus('error', '❌ Ошибка при проверке: ' + error.message);
+    }
+  }
+
+  // ========== ИГРА ==========
+  function updateBalanceDisplay() {
+    document.getElementById('balance-display').textContent = userBalance.toFixed(6) + ' ETH';
+    document.getElementById('bet-display').textContent = currentBet.toFixed(6) + ' ETH';
+  }
+
+  function spinSlots() {
+    if (userBalance < currentBet) {
+      showGameMessage('❌ Недостаточно средств!', 'loss');
+      return;
+    }
+
+    const btn = document.getElementById('spin-btn');
+    btn.disabled = true;
+
+    // Анимация вращения
+    const slots = document.querySelectorAll('.slot');
+    const emojis = ['🍎', '🍊', '🍋', '🍌', '🍇', '💰'];
+    
+    let spinCount = 0;
+    const spinInterval = setInterval(() => {
+      slots.forEach(slot => {
+        slot.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      });
+      spinCount++;
+      if (spinCount > 20) clearInterval(spinInterval);
+    }, 50);
+
+    // После анимации - результат
+    setTimeout(() => {
+      const result = Math.random() < SPIN_WIN_RATE;
+      const slot1 = emojis[Math.floor(Math.random() * emojis.length)];
+      const slot2 = emojis[Math.floor(Math.random() * emojis.length)];
+      const slot3 = result ? slot1 : emojis[Math.floor(Math.random() * emojis.length)];
+
+      document.getElementById('slot-1').textContent = slot1;
+      document.getElementById('slot-2').textContent = slot2;
+      document.getElementById('slot-3').textContent = slot3;
+
+      // Вычисляем результат
+      const isWin = (slot1 === slot2 && slot2 === slot3);
+      
+      if (isWin) {
+        const winAmount = currentBet * (1 + WIN_MULTIPLIER);
+        userBalance += winAmount;
+        wins++;
+        showGameMessage(`🎉 ВЫИГРАЛ! +${winAmount.toFixed(6)} ETH`, 'win');
+        gameHistory.push({ type: 'win', amount: winAmount, timestamp: Date.now() });
+      } else {
+        userBalance -= currentBet;
+        losses++;
+        showGameMessage(`😢 Проиграл ${currentBet.toFixed(6)} ETH`, 'loss');
+        gameHistory.push({ type: 'loss', amount: currentBet, timestamp: Date.now() });
+      }
+
+      // Сохраняем в Firebase
+      db.ref('users/' + userID).update({
+        balance: userBalance,
+        wins: wins,
+        losses: losses,
+        gameHistory: gameHistory
+      });
+
+      updateBalanceDisplay();
+      updateHistoryDisplay();
+      document.getElementById('wins-count').textContent = wins;
+      document.getElementById('losses-count').textContent = losses;
+
+      btn.disabled = false;
+
+      if (userBalance <= 0) {
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
+      }
+    }, 1500);
+  }
+
+  function changeBet() {
+    document.getElementById('bet-modal').classList.add('active');
+    document.getElementById('bet-input').value = currentBet.toFixed(6);
+  }
+
+  function closeBetModal() {
+    document.getElementById('bet-modal').classList.remove('active');
+  }
+
+  function confirmBet() {
+    const newBet = parseFloat(document.getElementById('bet-input').value);
+    if (newBet > 0 && newBet <= userBalance) {
+      currentBet = newBet;
+      updateBalanceDisplay();
+      document.getElementById('spin-btn').textContent = `🎯 ВРАЩАЙ (${currentBet.toFixed(6)} ETH)`;
+      closeBetModal();
+    } else {
+      alert('Неверная ставка!');
+    }
+  }
+
+  function showWithdrawModal() {
+    document.getElementById('withdraw-modal').classList.add('active');
+  }
+
+  function closeWithdrawModal() {
+    document.getElementById('withdraw-modal').classList.remove('active');
+  }
+
+  function confirmWithdraw() {
+    const address = document.getElementById('withdraw-address').value;
+    if (!address.startsWith('0x') || address.length !== 42) {
+      alert('Неверный адрес кошелька!');
+      return;
+    }
+
+    alert(`✅ В реальной системе здесь отправляется ${userBalance.toFixed(6)} ETH на ${address}\n\nЭто ДЕМО, поэтому реальной транзакции не будет.`);
+    closeWithdrawModal();
+  }
+
+  function showGameMessage(message, type) {
+    const msgEl = document.getElementById('game-message');
+    msgEl.textContent = message;
+    msgEl.className = 'message ' + type;
+    setTimeout(() => msgEl.textContent = '', 3000);
+  }
+
+  function updateHistoryDisplay() {
+    const historyEl = document.getElementById('history-list');
+    historyEl.innerHTML = gameHistory.slice(-10).reverse().map(item => `
+      <div class="stat-item ${item.type}">
+        ${item.type === 'win' ? '✅' : '❌'} ${item.type === 'win' ? '+' : '-'} ${item.amount.toFixed(6)} ETH
+      </div>
+    `).join('');
+  }
+
+  function showStatus(type, message) {
+    const box = document.getElementById('status-box');
+    const text = document.getElementById('status-text');
+    box.className = 'status-box active ' + type;
+    text.innerHTML = message.replace(/\n/g, '<br>');
+  }
+</script>
+
+</body>
+</html>
